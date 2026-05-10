@@ -1,0 +1,121 @@
+.py-60 {
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+.row-gap-24 {
+  row-gap: 24px;
+}
+
+.content_view {
+  background-color: $white_color;
+  border-radius: 0.3rem;
+  padding: 1rem;
+  border: 1px solid #CBCBCB;
+border-radius: 10px;
+}
+
+.bg-main {
+  background-color: $main-color;
+}
+
+.status_info {
+  padding: 8px 13px;
+  color: $white_color;
+  background-color: $info-color;
+  border-radius: 0.3rem;
+}
+.status_green {
+  padding: 8px 13px;
+  color: $white_color;
+  background-color: $green-color;
+  border-radius: 0.3rem;
+}
+.status_red {
+  padding: 8px 13px;
+  color: $white_color;
+  background-color: $red-color;
+  border-radius: 0.3rem;
+}
+
+//remove arrow input number
+/* Chrome, Safari, Edge, Opera */
+.rmv-arw-inp::-webkit-outer-spin-button,
+.rmv-arw-inp::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+.rmv-arw-inp[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-floating > label {
+  left: auto;
+}
+
+.h-app {
+  min-height: calc(100vh - 55px);
+}
+
+
+
+.fs-10px {
+  font-size: 10px !important;
+}
+.fs-11px {
+  font-size: 11px !important;
+}
+.fs-12px {
+  font-size: 12px !important;
+}
+.fs-13px {
+  font-size: 13px !important;
+}
+.w-230px {
+  width: 230px;
+}
+
+@include maxWidth(sm) {
+  .w-230px {
+    width: 100%;
+  }
+}
+.main-red-color {
+  color: #e02222 !important;
+}
+
+.table-borderless {
+  th {
+    background-color: #f0f2f8 !important;
+    font-weight: bold !important;
+    padding: 14px !important;
+  }
+  td {
+    padding: 11.2px 12px !important;
+    position: relative;
+    .img-table {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      -ms-border-radius: 50%;
+      -o-border-radius: 50%;
+    }
+  }
+  td,
+  th {
+    font-size: 12px !important;
+  }
+  tbody {
+    tr {
+      &:hover {
+        box-shadow: 0 0 6px 0 $red-color;
+      }
+    }
+  }
+}
+
+.gap-2rem {
+  gap: 2rem;
+}

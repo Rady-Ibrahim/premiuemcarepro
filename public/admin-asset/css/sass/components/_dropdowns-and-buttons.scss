@@ -1,0 +1,132 @@
+// Btns
+.main-btn {
+  color: white !important;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  width: fit-content;
+  position: relative;
+  padding: 8px 13px;
+  background: $green-color;
+  &.btn-orange {
+    background-color: $orange-color;
+  }
+  &.btn-purple {
+    background-color: $purple-color;
+  }
+  &.btn-blue {
+    background-color: $blue-color;
+  }
+  &.btn-main-color {
+    background-color: $main-color;
+  }
+  .icon {
+    width: 20px;
+    height: auto;
+  }
+  svg {
+    font-size: 20px;
+  }
+  .main-badge {
+    position: absolute;
+    left: -10px;
+    top: -10px;
+  }
+}
+
+// Badges
+.main-badge {
+  border: 2px solid $white_color !important;
+  border-radius: 50%;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  color: $white_color;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: $red-color;
+  &.badge-info {
+    background-color: $info-color;
+  }
+}
+
+.btn-light-blue {
+  padding: 5px 18px;
+  background: #daecfb;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+  color: #369fff;
+}
+
+.btn-light-green {
+  padding: 5px 18px;
+  background: #d4f2e2;
+  border-radius: 25px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 14px;
+  text-align: center;
+  color: #0fc859;
+}
+.btn-light-red {
+  padding: 5px 18px;
+  background: #ebc8c8;
+  border-radius: 25px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 14px;
+  text-align: center;
+  color: #c80f0f;
+}
+.btn-light-yellow {
+  padding: 5px 18px;
+  background: #ffecb4;
+  border-radius: 25px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 14px;
+  color: #ffc107;
+}
+.btn-light-purple {
+  padding: 5px 18px;
+  background: $purple-color-light;
+  white-space: nowrap;
+  border-radius: 25px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 14px;
+  color: $purple-color;
+}
+
+// Tabs
+.main-tabs {
+  .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+}
+
+.btn-whatsapp {
+    background-color: #25D366;
+    color: white !important;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    border-radius: 50%;
+    align-items: center;
+    font-size: 27px;
+    justify-content: center;
+}

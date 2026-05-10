@@ -1,0 +1,93 @@
+// Edut form control Select Bootstrap
+select.form-control {
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+  appearance: auto !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  height: 35px;
+}
+
+.form-select {
+  color: $dark-grey;
+  font-size: 14px;
+}
+
+// Img Form
+.view-img-form {
+  width: 150px;
+  max-width: 100%;
+  border-radius: 4px;
+}
+.special-label {
+  display: block;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.special-input {
+  width: 100%;
+  span {
+    display: block;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .box-input {
+    padding-left: 12px;
+    width: 100%;
+    border: 1px solid #bcbcbc;
+    border-radius: 8px;
+    @include flex-justify(flex-start);
+    input {
+      direction: rtl;
+      flex-grow: 1;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      border: none;
+      &:focus {
+        outline: none;
+      }
+      &[type="file"] {
+        border-color: #bcbcbc;
+      }
+    }
+  }
+}
+
+.select-setting {
+  font-weight: 600;
+  font-size: 15px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: #000;
+}
+.main-checkbox {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 0px;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: $main-color;
+    opacity: 0;
+    transition: .2s;
+    background-image: url('../img/icons/trueMark.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 12px;
+  }
+  &:checked {
+    background-color: transparent;
+    border-color: $main-color;
+    &::before {
+      opacity: 1;
+    }
+  }
+}

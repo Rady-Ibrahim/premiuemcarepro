@@ -1,0 +1,44 @@
+
+// All Rest
+* {
+  @include all-reset;
+}
+// a Reset
+a {
+  @include a-reset;
+}
+// reset btn
+button {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0;
+}
+// reset form-control
+.form-control {
+  font-size: 14px !important;
+  border: 1px solid $light-grey-color !important;
+}
+// main-section
+.main-section {
+  padding: 1.5rem 0;
+  min-height: calc(100vh - 41.88px - 54.5px - 69px);
+}
+// Modal
+.modal-header {
+  .modal-title {
+    font-size: 15px !important;
+  }
+  .btn-close {
+    margin: unset !important;
+  }
+}
+// Start Show User
+.tab-pane {
+  display: none;
+ &.active {
+  display: block;
+ }
+}
+// ENd Show User
+

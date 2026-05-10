@@ -1,0 +1,98 @@
+.main-navbar {
+    z-index: 1111;
+    background: #ffffff;
+    padding: 10px 0;
+    border-bottom: 1px solid #e6e6e6;
+    .tog-active {
+        font-size: 20px;
+        color: #9c9c9c;
+        height: auto;
+        cursor: pointer;
+    }
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        .img {
+            width: 150px;
+            height: auto;
+        }
+        .text {
+            color: #737373;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+    }
+    .list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        @include maxWidth(sm) {
+            .btn {
+                font-size: 12px !important;
+                padding: 4px !important;
+            }
+        }
+    }
+    .icon-nav {
+        .icon {
+            font-size: 20px;
+            width: 20px;
+        }
+        .main-badge {
+            position: absolute;
+            right: -10px;
+            color: $white_color;
+            top: -10px;
+            z-index: 2;
+        }
+        .dropdown-toggle {
+            position: relative;
+            &::after {
+                display: none;
+            }
+        }
+    }
+    .info-user {
+      padding-right: 2rem;
+      border-right: 1px solid #CCCCCC;
+        .content {
+            &::after {
+                content: none;
+            }
+            .text {
+                text-align: left;
+                display: flex;
+                flex-direction: column;
+                .name {
+                    color: #000000;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 7px;
+                }
+                .dic {
+                    color: #000000;
+                    font-size: 12px;
+                    opacity: 0.5;
+                }
+            }
+            .img {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                border: 1px solid #c1c1c1;
+                justify-content: center;
+                .icon {
+                    width: 20px;
+                    height: auto;
+                    object-fit: contain;
+                    border-radius: 100%;
+                }
+            }
+        }
+    }
+}

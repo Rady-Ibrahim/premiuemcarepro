@@ -1,0 +1,16 @@
+.main-title {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: center;
+  gap: 1rem;
+  .small {
+    font-size: 18px;
+    color: #000000;
+    opacity: 0.5;
+  }
+  .large {
+    font-weight: 500;
+    font-size: 30px;
+    color: #000000;
+  }
+}

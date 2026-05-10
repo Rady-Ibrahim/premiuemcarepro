@@ -1,0 +1,129 @@
+.login_page {
+    * {
+        font-family: "Cairo", sans-serif !important;
+        direction: rtl;
+    }
+    min-height: 100vh;
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    .box-col {
+        width: 50%;
+        padding: 88px;
+        &.box-bg {
+            position: relative;
+            z-index: 1;
+            color: white;
+            .bg {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                object-fit: cover;
+            }
+            .logo-holder {
+              display: flex;
+              align-items: end;
+              justify-content: flex-start;
+              .logo-bg {
+                  width: 65px;
+                  height: auto;
+              }
+              font-size: 28px;
+            }
+            .text-bg {
+                .title {
+                    font-weight: 700;
+                    font-size: 45px;
+                    line-height: 70px;
+                }
+                .p {
+                    font-weight: 500;
+                    font-size: 30px;
+                    line-height: 75px;
+                }
+            }
+            .text-bg-2 {
+                font-weight: 500;
+                font-size: 20px;
+                line-height: 45px;
+            }
+        }
+        @include maxWidth(lg) {
+            width: 100%;
+            padding: 12px;
+            .title {
+                text-align: center;
+            }
+        }
+        .form_content {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #efefef;
+            border-radius: 14px;
+            gap: 15px;
+            .logo-form {
+                width: 50px;
+                height: auto;
+            }
+            .header_title {
+                .title {
+                    font-weight: 600;
+                    font-size: 25px;
+                    margin-bottom: 4px;
+                }
+                .text {
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 30px;
+                    color: #737373;
+                }
+            }
+            .label {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+            .group-inp {
+                display: flex;
+                align-items: center;
+                border: 1px solid #cecece;
+                border-radius: 8px;
+                font-size: 14px;
+                overflow: hidden;
+                padding: 0.6rem 1rem;
+                .inp {
+                    flex: 1;
+                    border: 0;
+                    outline: 0;
+                }
+                .box {
+                    padding-right: 1rem;
+                    .icon {
+                        width: 24px;
+                        width: 100%;
+                        height: auto;
+                    }
+                }
+            }
+            .reseat {
+                font-size: 14px;
+                color: #2e5789;
+            }
+            .sub_btn {
+                background: #2e5789;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 45.19px;
+                font-size: 16px;
+                border-radius: 8px;
+                &:hover {
+                    background-color:#25456d;
+                }
+            }
+        }
+    }
+  }
