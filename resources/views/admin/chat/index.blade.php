@@ -719,12 +719,12 @@ function createConversation() {
     .catch(error => console.error('Error:', error));
 }
 
-// Smart polling for new messages (every 5 seconds)
+// Smart polling for new messages (every 3 seconds)
 // This doesn't refresh the entire conversation, only fetches new messages
 setInterval(() => {
     pollNewMessages();
     loadConversations(); // Update conversation list
-}, 5000);
+}, 3000);
 </script>
 
 @endsection
