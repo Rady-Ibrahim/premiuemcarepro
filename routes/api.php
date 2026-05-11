@@ -25,18 +25,12 @@ Route::middleware('auth:sanctum')->group(function ($request) {
     Route::delete('ticket/{id}', [TicketController::class, 'destroy']);
     Route::post('/ticket/{ticket}/details', [TicketController::class, 'detailStore']);
 
-    // Chat Routes
+    // Chat Routes (Customer-Admin only)
     Route::prefix('chat')->group(function () {
-        Route::get('/conversations', [ChatController::class, 'index']);
-        Route::post('/conversations', [ChatController::class, 'store']);
-        Route::get('/conversations/{id}', [ChatController::class, 'show']);
-        Route::delete('/conversations/{id}', [ChatController::class, 'destroy']);
-        Route::get('/conversations/{id}/messages', [ChatController::class, 'messages']);
+        Route::get('/messages', [ChatController::class, 'messages']);
         Route::post('/messages', [ChatController::class, 'sendMessage']);
         Route::put('/messages/{id}/read', [ChatController::class, 'markAsRead']);
-        Route::put('/conversations/{id}/read', [ChatController::class, 'markConversationAsRead']);
-        Route::delete('/messages/{id}', [ChatController::class, 'deleteMessage']);
-        Route::post('/upload', [ChatController::class, 'upload']);
+        Route::put('/read', [ChatController::class, 'markAllAsRead']);
         Route::get('/unread-count', [ChatController::class, 'unreadCount']);
     });
 });

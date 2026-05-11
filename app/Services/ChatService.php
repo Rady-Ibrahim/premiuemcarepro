@@ -11,6 +11,27 @@ use Illuminate\Support\Facades\Validator;
 
 class ChatService
 {
+    /**
+     * Get the admin user ID (first available admin)
+     */
+    private function getAdminId()
+    {
+        $admin = \App\Models\User::where('type', 'admin')->first();
+        if (!$admin) {
+            throw new \Exception('No admin user found');
+        }
+        return $admin->id;
+    }
+
+    /**
+     * Get or create conversation between user and admin
+     */
+    public function getOrCreateAdminConversation($userId)
+    {
+        $adminId = $this->getAdminId();
+        return $this->createOrGetConversation($userId, $adminId);
+    }
+
     public function createOrGetConversation($user1Id, $user2Id)
     {
         // Ensure user1_id is always smaller to maintain uniqueness
@@ -147,10 +168,15 @@ class ChatService
 
         // Send email notification (sync if no Redis, otherwise queue)
         if ($adminUnreadCount > 0) {
-            if (config('queue.default') === 'redis') {
-                dispatch(new \App\Jobs\SendUnreadChatNotification($adminUnreadCount, $adminEmail));
-            } else {
-                \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\UnreadChatNotification($adminUnreadCount));
+            try {
+                if (config('queue.default') === 'redis') {
+                    dispatch(new \App\Jobs\SendUnreadChatNotification($adminUnreadCount, $adminEmail));
+                } else {
+                    \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\UnreadChatNotification($adminUnreadCount));
+                }
+            } catch (\Exception $e) {
+                // Log email error but don't block message sending
+                \Log::error('Email notification failed: ' . $e->getMessage());
             }
         }
     }
@@ -202,6 +228,60 @@ class ChatService
         }
 
         return $conversations;
+    }
+
+    /**
+     * Get messages for the user's admin conversation
+     */
+    public function getAdminConversationMessages($userId, $limit = 50, $beforeId = null, $afterId = null)
+    {
+        $conversation = Conversation::forUser($userId)
+            ->whereHas('user1', function ($q) {
+                $q->where('type', 'admin');
+            })
+            ->orWhereHas('user2', function ($q) {
+                $q->where('type', 'admin');
+            })
+            ->first();
+
+        if (!$conversation) {
+            return [
+                'conversation' => null,
+                'messages' => [],
+            ];
+        }
+
+        return $this->getConversation($conversation->id, $userId, $limit, $beforeId, $afterId);
+    }
+
+    /**
+     * Send message to admin (auto-creates conversation)
+     */
+    public function sendMessageToAdmin($userId, $content = null, $file = null)
+    {
+        $conversation = $this->getOrCreateAdminConversation($userId);
+        return $this->sendMessage($conversation->id, $userId, $content, $file);
+    }
+
+    /**
+     * Mark all messages in user's admin conversation as read
+     */
+    public function markAllAsReadForUser($userId)
+    {
+        $conversation = Conversation::forUser($userId)
+            ->whereHas('user1', function ($q) {
+                $q->where('type', 'admin');
+            })
+            ->orWhereHas('user2', function ($q) {
+                $q->where('type', 'admin');
+            })
+            ->first();
+
+        if (!$conversation) {
+            return [];
+        }
+
+        return $this->markConversationAsRead($conversation->id, $userId);
     }
 
     public function getUnreadCount($userId)

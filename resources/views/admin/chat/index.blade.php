@@ -428,8 +428,7 @@ function createMessageHTML(message) {
         }
     }
 
-    return `
-        <div class="message ${isSent ? 'sent' : 'received'}">
+    return `<div class="message ${isSent ? 'sent' : 'received'}">
             <div class="message-content">
                 ${messageContent}
             </div>
@@ -437,8 +436,7 @@ function createMessageHTML(message) {
                 ${formatTime(message.created_at)}
                 ${readReceipt}
             </div>
-        </div>
-    `;
+        </div>`;
 }
 
 function sendMessage() {
@@ -481,7 +479,27 @@ function sendMessage() {
             .catch(error => console.error('Error:', error));
         }
     } else {
-        // Send text message
+        // Optimistic UI for text messages
+        const tempId = 'temp-' + Date.now();
+        const tempMessage = {
+            id: tempId,
+            conversation_id: currentConversationId,
+            sender_id: {{ auth()->id() }},
+            content: content,
+            type: 'text',
+            is_read: false,
+            created_at: new Date().toISOString(),
+            sender: {
+                id: {{ auth()->id() }},
+                name: '{{ auth()->user()->name }}'
+            }
+        };
+
+        // Show message immediately
+        appendMessage(tempMessage);
+        input.value = '';
+
+        // Send in background
         const formData = new FormData();
         formData.append('conversation_id', currentConversationId);
         formData.append('content', content);
@@ -498,13 +516,54 @@ function sendMessage() {
         .then(data => {
             console.log('sendMessage response:', data);
             if(data.success) {
-                input.value = '';
-                appendMessage(data.data);
+                // Replace temp message with real message
+                const tempElement = document.querySelector(`[data-message-id="${tempId}"]`);
+                if (tempElement) {
+                    // Update the temp element with real data
+                    tempElement.setAttribute('data-message-id', data.data.id);
+                    
+                    // Update message content if needed
+                    const messageContent = tempElement.querySelector('.message-content');
+                    if (messageContent && data.data.content !== content) {
+                        messageContent.textContent = data.data.content;
+                    }
+                    
+                    // Update time if needed
+                    const messageTime = tempElement.querySelector('.message-time');
+                    if (messageTime) {
+                        messageTime.innerHTML = formatTime(data.data.created_at) + 
+                            (data.data.sender_id === {{ auth()->id()}} ? 
+                                '<i class="fa-solid fa-check" style="color: #9E9E9E; font-size: 12px; margin-right: 4px;"></i>' : 
+                                '');
+                    }
+                    
+                    // Update last message ID
+                    lastMessageId = data.data.id;
+                } else {
+                    // If temp element not found, just append the real message
+                    appendMessage(data.data);
+                }
             } else {
                 console.error('Send message failed:', data.message);
+                // Remove temp message on failure
+                const tempElement = document.querySelector(`[data-message-id="${tempId}"]`);
+                if (tempElement) {
+                    tempElement.remove();
+                }
+                // Restore input value
+                input.value = content;
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            // Remove temp message on error
+            const tempElement = document.querySelector(`[data-message-id="${tempId}"]`);
+            if (tempElement) {
+                tempElement.remove();
+            }
+            // Restore input value
+            input.value = content;
+        });
     }
 }
 
@@ -606,10 +665,27 @@ function handleFileSelect(event) {
 
 function appendMessage(message) {
     const container = document.getElementById('chatMessages');
-    container.innerHTML += createMessageHTML(message);
+    if (!container) return;
+
+    // Check if message already exists to prevent duplicates
+    const existingMessage = container.querySelector(`[data-message-id="${message.id}"]`);
+    if (existingMessage) {
+        console.log('Message already displayed, skipping...');
+        return;
+    }
+
+    const messageElement = document.createElement('div');
+    messageElement.className = `message ${message.sender_id === {{ auth()->id() }} ? 'sent' : 'received'}`;
+    messageElement.setAttribute('data-message-id', message.id);
+    messageElement.innerHTML = createMessageHTML(message);
+
+    container.appendChild(messageElement);
     container.scrollTop = container.scrollHeight;
-    // Update last message ID
-    lastMessageId = message.id;
+    
+    // Update last message ID only if it's a real message (not temp)
+    if (!message.id.toString().startsWith('temp-')) {
+        lastMessageId = message.id;
+    }
 }
 
 function pollNewMessages() {
