@@ -176,12 +176,12 @@ class ChatController extends Controller
 
     public function getFile($path)
     {
-        $filePath = storage_path('app/uploads/chat/' . $path);
-
-        if (!file_exists($filePath)) {
+        $disk = Storage::disk('chat_uploads');
+        
+        if (!$disk->exists($path)) {
             return response()->json(['error' => 'File not found'], 404);
         }
-
-        return response()->file($filePath);
+        
+        return $disk->response($path);
     }
 }
