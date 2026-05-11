@@ -7,6 +7,7 @@ use App\Services\ChatService;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
@@ -176,12 +177,17 @@ class ChatController extends Controller
 
     public function getFile($path)
     {
-        $disk = Storage::disk('chat_uploads');
+        $filePath = storage_path('app/uploads/chat/' . $path);
         
-        if (!$disk->exists($path)) {
-            return response()->json(['error' => 'File not found'], 404);
+        // Debug logging
+        \Log::info("getFile called with path: " . $path);
+        \Log::info("Constructed filePath: " . $filePath);
+        \Log::info("File exists: " . (file_exists($filePath) ? 'YES' : 'NO'));
+
+        if (!file_exists($filePath)) {
+            return response()->json(['error' => 'File not found', 'path' => $path, 'file_path' => $filePath], 404);
         }
-        
-        return $disk->response($path);
+
+        return response()->file($filePath);
     }
 }
