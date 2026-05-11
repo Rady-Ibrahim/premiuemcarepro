@@ -53,10 +53,12 @@ class ChatService
                 'updated_at' => now(),
             ]);
 
-            // Broadcast the message
-            event(new MessageSent($message));
+            // Only broadcast if Redis is available
+            if (config('broadcasting.default') === 'redis' && config('queue.default') === 'redis') {
+                event(new MessageSent($message));
+            }
 
-            // Check if we should send email notification
+            // Check if we should send email notification (sync if no Redis)
             $this->checkAndSendUnreadNotifications();
 
             DB::commit();
@@ -120,7 +122,40 @@ class ChatService
         return $message;
     }
 
-    public function getConversation($conversationId, $userId, $limit = 50, $beforeId = null)
+    private function checkAndSendUnreadNotifications()
+    {
+        // Check if notifications are enabled
+        $notificationsEnabled = \App\Models\Setting::get('enable_chat_notifications', '1');
+        if ($notificationsEnabled !== '1') {
+            return;
+        }
+
+        // Get admin email
+        $adminEmail = \App\Models\Setting::get('admin_chat_email', 'admin@example.com');
+
+        // Get admin user IDs
+        $adminIds = \App\Models\User::where('type', 'admin')->pluck('id');
+
+        // Get unread count for admin users
+        $adminUnreadCount = Message::where('is_read', false)
+            ->whereNotIn('sender_id', $adminIds)
+            ->whereHas('conversation', function($query) use ($adminIds) {
+                $query->whereIn('user1_id', $adminIds)
+                    ->orWhereIn('user2_id', $adminIds);
+            })
+            ->count();
+
+        // Send email notification (sync if no Redis, otherwise queue)
+        if ($adminUnreadCount > 0) {
+            if (config('queue.default') === 'redis') {
+                dispatch(new \App\Jobs\SendUnreadChatNotification($adminUnreadCount, $adminEmail));
+            } else {
+                \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\UnreadChatNotification($adminUnreadCount));
+            }
+        }
+    }
+
+    public function getConversation($conversationId, $userId, $limit = 50, $beforeId = null, $afterId = null)
     {
         $conversation = Conversation::findOrFail($conversationId);
 
@@ -136,6 +171,10 @@ class ChatService
 
         if ($beforeId) {
             $query->where('id', '<', $beforeId);
+        }
+
+        if ($afterId) {
+            $query->where('id', '>', $afterId);
         }
 
         $messages = $query->get();

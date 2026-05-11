@@ -70,11 +70,12 @@ class ChatController extends Controller
     {
         $userId = Auth::id();
         $limit = request()->get('limit', 50);
+        $afterId = request()->get('after');
 
-        \Log::info("getMessages called", ['conversation_id' => $id, 'user_id' => $userId, 'limit' => $limit]);
+        \Log::info("getMessages called", ['conversation_id' => $id, 'user_id' => $userId, 'limit' => $limit, 'after' => $afterId]);
 
         try {
-            $result = $this->chatService->getConversation($id, $userId, $limit);
+            $result = $this->chatService->getConversation($id, $userId, $limit, null, $afterId);
 
             \Log::info("getMessages result", ['result' => $result]);
 

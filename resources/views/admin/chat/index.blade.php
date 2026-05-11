@@ -226,6 +226,7 @@
 <script>
 let currentConversationId = null;
 let currentUserId = null;
+let lastMessageId = null;
 
 // Load conversations on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -309,23 +310,34 @@ function loadConversation(conversationId, element) {
     document.querySelectorAll('.conversation-item').forEach(item => {
         item.classList.remove('active');
     });
-    if (element) {
+    if(element) {
         element.classList.add('active');
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        console.error('CSRF token meta tag not found');
+        return;
     }
 
     fetch(`/admin/chat/api/conversations/${conversationId}/messages`, {
         headers: {
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-TOKEN': csrfToken.content
         }
     })
     .then(response => response.json())
     .then(data => {
         if(data.success) {
             displayChat(data.data);
+            // Store last message ID for smart polling
+            const messages = data.data.messages || [];
+            if (messages.length > 0) {
+                lastMessageId = messages[messages.length - 1].id;
+            }
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => console.error('Error loading conversation:', error));
 }
 
 function displayChat(data) {
@@ -596,6 +608,32 @@ function appendMessage(message) {
     const container = document.getElementById('chatMessages');
     container.innerHTML += createMessageHTML(message);
     container.scrollTop = container.scrollHeight;
+    // Update last message ID
+    lastMessageId = message.id;
+}
+
+function pollNewMessages() {
+    if (!currentConversationId || !lastMessageId) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) return;
+
+    fetch(`/admin/chat/api/conversations/${currentConversationId}/messages?after=${lastMessageId}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken.content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            const messages = data.data.messages || [];
+            messages.forEach(msg => {
+                appendMessage(msg);
+            });
+        }
+    })
+    .catch(error => console.error('Error polling new messages:', error));
 }
 
 function markAsRead() {
@@ -681,11 +719,12 @@ function createConversation() {
     .catch(error => console.error('Error:', error));
 }
 
-// Auto-refresh conversations list only every 10 seconds
-// Don't auto-refresh current conversation to prevent text loss
+// Smart polling for new messages (every 5 seconds)
+// This doesn't refresh the entire conversation, only fetches new messages
 setInterval(() => {
-    loadConversations();
-}, 10000);
+    pollNewMessages();
+    loadConversations(); // Update conversation list
+}, 5000);
 </script>
 
 @endsection
