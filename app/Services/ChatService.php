@@ -56,14 +56,16 @@ class ChatService
     {
         DB::beginTransaction();
         try {
+            $fileData = $file ? $this->uploadFile($file, $conversationId) : null;
+
             $message = Message::create([
                 'conversation_id' => $conversationId,
                 'sender_id' => $senderId,
                 'content' => $content,
-                'type' => $file ? 'file' : 'text',
-                'file_path' => $file ? $this->uploadFile($file, $conversationId)['path'] : null,
-                'file_name' => $file ? $file->getClientOriginalName() : null,
-                'file_size' => $file ? $file->getSize() : null,
+                'type' => $fileData ? $fileData['type'] : 'text',
+                'file_path' => $fileData ? $fileData['path'] : null,
+                'file_name' => $fileData ? $fileData['name'] : null,
+                'file_size' => $fileData ? $fileData['size'] : null,
                 'is_read' => false,
             ]);
 
