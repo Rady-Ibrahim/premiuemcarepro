@@ -26,6 +26,32 @@
             </div>
         </div>
 
+        <div class="col-12">
+            <h5 class="mb-3">اعدادات الشات</h5>
+        </div>
+
+        <div class="col">
+            <div class="inp-holder">
+                <label class="special-input">
+                    <span>ايميل الادمن للإشعارات</span>
+                    <input type="email" name="admin_chat_email" placeholder="admin@example.com" class="form-control"
+                value="{{ $settings['admin_chat_email'] ?? 'admin@example.com' }}">
+                </label>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="inp-holder">
+                <label class="special-input">
+                    <span>تفعيل إشعارات الشات</span>
+                    <select name="enable_chat_notifications" class="form-control">
+                        <option value="1" {{ ($settings['enable_chat_notifications'] ?? '1') == '1' ? 'selected' : '' }}>مفعل</option>
+                        <option value="0" {{ ($settings['enable_chat_notifications'] ?? '1') == '0' ? 'selected' : '' }}>معطل</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
         <div class="col-12 col-md-12 col-lg-12 col-xl-12">
             <div class="btn-holder d-flex justify-content-center mt-4">
                 <button  type="submit" class="main-btn">حفظ</button>

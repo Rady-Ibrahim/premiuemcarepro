@@ -55,4 +55,24 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'entity_id');
     }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class, 'user1_id')
+                    ->orWhere('user2_id', $this->id);
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function isPartOf($conversationId)
+    {
+        return Conversation::where('id', $conversationId)
+            ->where(function($query) {
+                $query->where('user1_id', $this->id)
+                      ->orWhere('user2_id', $this->id);
+            })->exists();
+    }
 }

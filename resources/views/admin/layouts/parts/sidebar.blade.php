@@ -71,6 +71,25 @@
             </li>
         </div>
 
+        <li class="list-item {{request()->routeIs('admin.chat') ? 'active' :''}}">
+            <a href="{{ route('admin.chat.index') }}">
+                <div>
+                    <i class="fa-solid fa-comments"></i>
+                    الشات
+                    @php
+                        $unreadCount = \App\Models\Message::where('is_read', false)
+                            ->where('sender_id', '!=', auth()->id())
+                            ->whereHas('conversation', function($query) {
+                                $query->where('user1_id', auth()->id())
+                                    ->orWhere('user2_id', auth()->id());
+                            })
+                            ->count();
+                    @endphp
+                    <div class="main-badge">{{ $unreadCount }}</div>
+                </div>
+            </a>
+        </li>
+
         <li class="list-item {{request()->routeIs('admin.settings') ? 'active' :''}}">
             <a href="{{ route('admin.settings') }}">
                 <div>

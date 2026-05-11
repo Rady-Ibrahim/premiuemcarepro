@@ -49,6 +49,13 @@ return [
             'url' => env('APP_URL') . '/public/uploads',
             'visibility' => 'public',
         ],
+        'chat_uploads' => [
+            'driver' => 'local',
+            'root' => storage_path('app/uploads/chat'),
+            'url' => env('APP_URL') . '/api/v1/chat/file',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
 
         's3' => [
             'driver' => 's3',
