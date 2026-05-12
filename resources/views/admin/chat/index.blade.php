@@ -323,8 +323,11 @@
                 // Profile image
                 let profileImage = '';
                 if (otherUser.image) {
+                    const imagePath = otherUser.image.startsWith('customers/') 
+                        ? `/uploads/${otherUser.image}` 
+                        : `/uploads/customers/${otherUser.image}`;
                     profileImage =
-                        `<img src="/uploads/customers/${otherUser.image}" alt="${otherUser.name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
+                        `<img src="${imagePath}" alt="${otherUser.name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
                 } else {
                     profileImage =
                         `<div style="width: 40px; height: 40px; border-radius: 50%; background: #007bff; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">${otherUser.name ? otherUser.name.charAt(0).toUpperCase() : 'U'}</div>`;

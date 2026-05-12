@@ -47,7 +47,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'data' => $conversations->items(),
-        ]);
+        ])->header('Content-Type', 'application/json');
     }
 
     public function createConversation(Request $request)

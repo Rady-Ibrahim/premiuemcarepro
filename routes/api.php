@@ -6,7 +6,7 @@ use App\Http\Controllers\API\ProviderController;
 use App\Http\Controllers\API\TicketController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::get('/settings', function () {
     return response()->json(['settings' => setting()->all()]);
