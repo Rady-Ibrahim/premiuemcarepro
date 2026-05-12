@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function ($request) {
         Route::put('/messages/{id}/read', [ChatController::class, 'markAsRead']);
         Route::put('/read', [ChatController::class, 'markAllAsRead']);
         Route::get('/unread-count', [ChatController::class, 'unreadCount']);
-        Route::get('/file/{path}', [\App\Http\Controllers\Admin\ChatController::class, 'getFile'])->where('path', '.*');
     });
 });
+
+// Public file access (no auth required)
+Route::get('/chat/file/{path}', [\App\Http\Controllers\Admin\ChatController::class, 'getFile'])->where('path', '.*');
