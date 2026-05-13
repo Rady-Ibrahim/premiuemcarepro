@@ -162,7 +162,7 @@ class ChatService
         // Get unread count for admin users
         $adminUnreadCount = Message::where('is_read', false)
             ->whereNotIn('sender_id', $adminIds)
-            ->whereHas('conversation', function($query) use ($adminIds) {
+            ->whereHas('conversation', function ($query) use ($adminIds) {
                 $query->whereIn('user1_id', $adminIds)
                     ->orWhereIn('user2_id', $adminIds);
             })
@@ -234,23 +234,24 @@ class ChatService
 
     /**
      * Get messages for the user's admin conversation
+     * Auto-creates conversation if it doesn't exist (same as sendMessageToAdmin)
      */
     public function getAdminConversationMessages($userId, $limit = 50, $beforeId = null, $afterId = null)
     {
         $conversation = Conversation::forUser($userId)
-            ->whereHas('user1', function ($q) {
-                $q->where('type', 'admin');
-            })
-            ->orWhereHas('user2', function ($q) {
-                $q->where('type', 'admin');
+            ->where(function ($query) {
+                $query->whereHas('user1', function ($q) {
+                    $q->where('type', 'admin');
+                })
+                    ->orWhereHas('user2', function ($q) {
+                        $q->where('type', 'admin');
+                    });
             })
             ->first();
 
+        // Auto-create conversation if it doesn't exist
         if (!$conversation) {
-            return [
-                'conversation' => null,
-                'messages' => [],
-            ];
+            $conversation = $this->getOrCreateAdminConversation($userId);
         }
 
         return $this->getConversation($conversation->id, $userId, $limit, $beforeId, $afterId);
@@ -267,20 +268,24 @@ class ChatService
 
     /**
      * Mark all messages in user's admin conversation as read
+     * Auto-creates conversation if it doesn't exist
      */
     public function markAllAsReadForUser($userId)
     {
         $conversation = Conversation::forUser($userId)
-            ->whereHas('user1', function ($q) {
-                $q->where('type', 'admin');
-            })
-            ->orWhereHas('user2', function ($q) {
-                $q->where('type', 'admin');
+            ->where(function ($query) {
+                $query->whereHas('user1', function ($q) {
+                    $q->where('type', 'admin');
+                })
+                    ->orWhereHas('user2', function ($q) {
+                        $q->where('type', 'admin');
+                    });
             })
             ->first();
 
+        // Auto-create conversation if it doesn't exist
         if (!$conversation) {
-            return [];
+            $conversation = $this->getOrCreateAdminConversation($userId);
         }
 
         return $this->markConversationAsRead($conversation->id, $userId);
